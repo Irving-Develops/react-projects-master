@@ -42,7 +42,7 @@ function App() {
       <div className="jobs-center">
         <div className="btn-container">
           {jobData.map((job) => (
-            <Button job={job} styles="job-btn" onClick={() => handleClick(job.id)}/>
+            <Button job={job} styles={singleJob[0]===job ? `job-btn active-btn` : "job-btn"} onClick={() => handleClick(job.id)}/>
           ))}
         </div>
         <article className="job-info">
