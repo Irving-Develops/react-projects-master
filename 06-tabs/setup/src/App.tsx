@@ -1,33 +1,38 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { FaAngleDoubleRight } from "react-icons/fa";
+import Button from "./components/Button";
+import { JobData } from "./types";
 // ATTENTION!!!!!!!!!!
 // I SWITCHED TO PERMANENT DOMAIN
 const url = "https://course-api.com/react-tabs-project";
 function App() {
-  const [data, setData] = useState<any>([]);
-  console.log(data);
+  const [jobData, setJobData] = useState<JobData[]>([]);
+  const [singleJob, setSingleJob] = useState<JobData[] | []>([]);
+  console.log(singleJob);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const { data } = await axios.get(url);
-        setData(data);
+        setJobData(data);
+        setSingleJob([data[0]]);
       } catch (error) {
-        if (error.response) {
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
-        } else if (error.request) {
-          console.log(error.request);
+        if (axios.isAxiosError(error)) {
+          const axiosError = error as AxiosError;
+          console.log(axiosError.response?.data);
         } else {
-          console.log("Error", error.message);
+          console.log(error);
         }
-        console.log(error.config);
       }
     };
     fetchData();
   }, []);
+
+  const handleClick = (id: string) => {
+    const newJobData = jobData.filter((job) => job.id === id);
+    setSingleJob(newJobData);
+  };
   return (
     <section className="section">
       <div className="title">
@@ -36,20 +41,26 @@ function App() {
       </div>
       <div className="jobs-center">
         <div className="btn-container">
-          {data.map(data => (
-            <button key={data.id} className="job-btn">{data.company}</button>
+          {jobData.map((job) => (
+            <Button job={job} styles="job-btn" onClick={() => handleClick(job.id)}/>
           ))}
         </div>
         <article className="job-info">
-          {data.map(data => (
-            <>
-            <h3></h3>
-            </>
-          ))}
+              <h3>{singleJob[0]?.title}</h3>
+              <h4>{singleJob[0]?.company}</h4>
+              <p className="job-date">{singleJob[0]?.dates}</p>
+              <div className="job-desc">
+                {singleJob[0]?.duties.map((duty) => (
+                  <>
+                    <FaAngleDoubleRight />
+                    <p>{duty}</p>
+                  </>
+                ))}
+              </div>
         </article>
       </div>
     </section>
-  )
+  );
 }
 
 export default App;
