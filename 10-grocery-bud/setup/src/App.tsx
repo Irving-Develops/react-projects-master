@@ -5,18 +5,34 @@ import React, {useState } from 'react'
 const App = () => {
   const [grocery, setGrocery] = useState('')
   const [groceryList, setGroceryList] = useState<string[]>([])
+  const [isEditing, setIsEditing] = useState(false)
+  const [editIndex, setEditIndex] = useState(0)
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if(grocery) {
+    if(isEditing && grocery) {
+      setGroceryList(groceryList.map((item, index) => {
+        if(editIndex === index) {
+          return grocery
+        }
+        return item
+      }))
+      setIsEditing(false)
+      setGrocery('')
+    }else if(grocery) {
       setGroceryList([...groceryList, grocery])
       setGrocery('')
     }else {
       alert('Please enter a value')
     }
-    console.log(groceryList)
   }
-  console.log(groceryList)
+
+  const handleEdit = (index: number) => {
+    setGrocery(groceryList[index])
+    setEditIndex(index);
+    setIsEditing(true)
+  }
+
   return (
 <section className="section-center">
   <form action="post" className="grocery-form" onSubmit={handleSubmit}>
@@ -34,7 +50,7 @@ const App = () => {
       <article key={index} className="grocery-item">
         <p className="title">{item}</p>
         <div className="btn-container">
-          <button className="edit-btn">edit</button>
+          <button className="edit-btn" onClick={() => handleEdit(index)}>edit</button>
           <button className="delete-btn">delete</button>
         </div>
       </article>
