@@ -5,7 +5,7 @@ const App: FC = (): JSX.Element => {
 
   const [paragraphs, setParagraphs] = useState<number>(1);
   const [filteredParagraphs, setFilteredParagraphs] = useState<string[]>([]);
-  
+
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => { 
     setParagraphs(parseInt(e.target.value));
   }
@@ -13,7 +13,6 @@ const App: FC = (): JSX.Element => {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setFilteredParagraphs(data.slice(0, paragraphs));
-    setParagraphs(1)
   };
   return (
     <section className="section-center">
